@@ -2,7 +2,7 @@ aid: quaker-houghton
 url: https://raw.githubusercontent.com/api-evangelist/quaker-houghton/refs/heads/main/apis.yml
 name: Quaker Houghton
 type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - Industrial Fluids
   - Chemical
@@ -19,7 +19,7 @@ apis:
       - Industrial Fluids
       - Chemical
       - Manufacturing
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     baseURL: https://api.quakerhoughton.com
     humanURL: https://developer.quakerhoughton.com
     properties:
