@@ -4,23 +4,37 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Quaker Houghton
 providerId: quaker-houghton
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+# Re-checked 2026-09-17 by the enrichment pipeline: the site was searched for any pricing,
+# plans or developer-program page and none exists. An honest zero, recorded as searched.
+method: searched
+generated: '2026-09-17'
+modified: '2026-09-17'
+reconciled: true
+plan_count: 0
 tags:
   - Industrial Fluids
   - Chemical
   - Manufacturing
 notes: Quaker Houghton is a Fortune 1000 industrial fluids manufacturer (NYSE - KWR); the company does
-  not publish a public developer portal, API catalog, or pricing page. Any platform integrations are
+  not publish a public developer portal, API catalog, or pricing page. The only machine surfaces on
+  its host (the Events Calendar REST APIs and an OAuth-gated WordPress MCP server) carry no plan or
+  price of any kind — reads are free and anonymous, writes need a WordPress account that is not offered. Any platform integrations are
   arranged directly with Quaker Houghton's enterprise customer-success organization. Reconciliation
   flagged false until a public commercial surface is published.
 description: No public API plan or pricing surface published by Quaker Houghton; integrations are scoped
   through the enterprise customer relationship.
 sources:
   - https://home.quakerhoughton.com/
+  - https://home.quakerhoughton.com/page-sitemap.xml
+  - https://home.quakerhoughton.com/developers
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/developers
+    status: 404
+  - url: https://home.quakerhoughton.com/page-sitemap.xml
+    status: 200
+    note: 679 URLs, none naming pricing, plans, developer or API
 plans:
   - id: quaker-houghton-contact-sales
     name: Contact Sales

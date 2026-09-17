@@ -1,0 +1,95 @@
+generated: '2026-09-17'
+method: derived
+source: >-
+  https://home.quakerhoughton.com/.well-known/oauth-authorization-server,
+  https://home.quakerhoughton.com/.well-known/oauth-protected-resource,
+  openapi/_original/quaker-houghton-tec-v1-openapi-original.json,
+  openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json,
+  live responses from https://home.quakerhoughton.com/wp-json/
+description: >-
+  Cross-cutting standards conformance for the machine surfaces on home.quakerhoughton.com. The
+  MCP server implements the modern MCP authorization stack in full — RFC 8414 authorization-server
+  metadata, RFC 9728 protected-resource metadata with a WWW-Authenticate resource_metadata
+  pointer, OAuth 2.1 authorization code with mandatory PKCE, and client-ID metadata documents —
+  all published anonymously. The Events Calendar REST APIs conform to OpenAPI 3.0 and to
+  WordPress REST conventions (X-WP-Total / X-WP-TotalPages / RFC 5988 Link pagination headers).
+  Nothing is claimed for RFC 9457, RFC 8594, idempotency, OIDC or any sector standard: Quaker
+  Houghton's market (industrial process fluids) has no API domain standard, and none is asserted.
+standards:
+- id: openapi-3
+  conforms: true
+  evidence: >-
+    tec/v1 serves `openapi: 3.0.4` (7 paths, 16 operations, 12 schemas) at /wp-json/tec/v1/docs;
+    tribe/events/v1 serves `openapi: 3.0.0` (14 paths, 30 operations) at /wp-json/tribe/events/v1/doc.
+- id: oauth2
+  conforms: true
+  evidence: >-
+    /.well-known/oauth-authorization-server declares authorization_code + refresh_token grants,
+    response_types [code], issuer https://home.quakerhoughton.com.
+- id: oauth2-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported [S256] in the RFC 8414 document; public clients only (token_endpoint_auth_methods_supported [none]).
+- id: rfc8414
+  conforms: true
+  evidence: https://home.quakerhoughton.com/.well-known/oauth-authorization-server/ — HTTP 200 application/json (saved verbatim in well-known/).
+- id: rfc9728
+  conforms: true
+  evidence: >-
+    https://home.quakerhoughton.com/.well-known/oauth-protected-resource/ — HTTP 200 naming resource
+    /wp-json/mcp/mcp-oauth-server and authorization_servers; the 401 challenge on the resource
+    carries resource_metadata= pointing back at it.
+- id: oauth-client-id-metadata-document
+  conforms: true
+  evidence: client_id_metadata_document_supported true; authorization_response_iss_parameter_supported true (RFC 9207).
+- id: rfc7591
+  conforms: false
+  evidence: No registration_endpoint in the authorization-server metadata; dynamic client registration is not offered.
+- id: mcp
+  conforms: true
+  evidence: >-
+    POST /wp-json/mcp/mcp-oauth-server answers JSON-RPC requests with an MCP-shaped 401
+    (mcp_unauthorized) and the RFC 9728 challenge the MCP authorization spec requires; tools/list
+    could not be verified anonymously.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on home.quakerhoughton.com.
+- id: pagination
+  conforms: true
+  evidence: >-
+    page / per_page query parameters and X-WP-Total, X-WP-TotalPages and RFC 5988 Link response
+    headers are declared on every collection GET in tec/v1 and observed live on
+    /wp-json/tribe/events/v1/events (access-control-expose-headers: X-WP-Total, X-WP-TotalPages, Link).
+- id: rfc9457
+  conforms: false
+  evidence: Errors are the WordPress {code, message, data.status} envelope in application/json, not application/problem+json.
+- id: rfc8594
+  conforms: false
+  evidence: No Deprecation or Sunset headers observed; no deprecation policy published.
+- id: idempotency
+  conforms: false
+  evidence: No Idempotency-Key or equivalent mechanism is declared in either contract.
+- id: rfc9116
+  conforms: false
+  evidence: /.well-known/security.txt returns 404.
+- id: rfc9727
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404.
+domain_standard:
+  applicable: false
+  note: >-
+    Industrial process fluids has no API domain standard to declare (no SCIM, OData, OpenRTB,
+    HL7, ISO 20022 or similar shape is relevant), and neither contract declares one. Reward-only
+    check; nothing is asserted.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/.well-known/oauth-authorization-server/
+    status: 200
+  - url: https://home.quakerhoughton.com/.well-known/oauth-protected-resource/
+    status: 200
+  - url: https://home.quakerhoughton.com/.well-known/openid-configuration
+    status: 404
+  - url: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+    status: 200
+  - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+    status: 200

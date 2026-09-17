@@ -1,0 +1,66 @@
+generated: '2026-09-17'
+method: derived
+source: >-
+  4xx/5xx responses declared in openapi/_original/quaker-houghton-tec-v1-openapi-original.json and
+  openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json, plus the live error
+  envelopes observed on https://home.quakerhoughton.com/wp-json/ on 2026-09-17
+format: wordpress-rest-error
+envelope:
+  content_type: application/json
+  shape: '{"code": "<machine slug>", "message": "<human text>", "data": {"status": <http status>}}'
+  observed:
+  - status: 400
+    body: '{"code":"missing_experimental_endpoint_acknowledgement","message":"Experimental endpoint requires acknowledgement header.","data":{"status":400}}'
+    url: https://home.quakerhoughton.com/wp-json/tec/v1/events
+  - status: 401
+    body: '{"code":"mcp_unauthorized","message":"MCP authentication required.","data":{"status":401}}'
+    url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+  - status: 401
+    body: '{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}'
+    url: https://home.quakerhoughton.com/wp-json/wp-abilities/v1/abilities
+  note: Neither contract uses application/problem+json (RFC 9457); the WordPress {code, message, data.status} envelope applies throughout.
+problems:
+- status: 400
+  title: Invalid request data
+  code: rest_invalid_param (WordPress) / missing_experimental_endpoint_acknowledgement (tec/v1)
+  operations: [getEvents, getEvent, createEvent, updateEvent, getOrganizers, getOrganizer, createOrganizer, updateOrganizer, getVenues, getVenue, createVenue, updateVenue]
+  detail: >-
+    A required parameter is missing or an input parameter is in the wrong format; on tribe/events/v1
+    also "the event/venue/organizer post ID is missing or does not exist" and "one or more of the
+    specified query variables has a bad format". On tec/v1 every data endpoint returns this status
+    until the experimental-acknowledgement header is sent.
+  remediation: Check parameter types against the contract; for tec/v1 send the plugin's experimental-endpoint acknowledgement header or use tribe/events/v1.
+- status: 401
+  title: You are not logged in
+  code: rest_forbidden / mcp_unauthorized
+  operations: [createEvent, updateEvent, deleteEvent, createOrganizer, updateOrganizer, deleteOrganizer, createVenue, updateVenue, deleteVenue]
+  remediation: Authenticate with HTTP Basic (WordPress Application Password) on the Events APIs; complete the OAuth 2.1 PKCE flow for the MCP server.
+- status: 403
+  title: Permission denied
+  operations: [createEvent, updateEvent, deleteEvent, createOrganizer, updateOrganizer, deleteOrganizer, createVenue, updateVenue, deleteVenue]
+  detail: >-
+    "You do not have permission to create/update/delete this event|organizer|venue" (tec/v1);
+    "The user is not authorized to create ..." and "The ... with the specified ID is not accessible"
+    (tribe/events/v1, also raised on reads of private/unpublished entities).
+  remediation: The authenticated WordPress user lacks the capability; there is no self-service way to obtain it.
+- status: 404
+  title: Not found
+  operations: [getEvent, updateEvent, deleteEvent, getOrganizer, updateOrganizer, deleteOrganizer, getVenue, updateVenue, deleteVenue]
+  detail: The requested event, organizer, venue, category or tag does not exist, or the requested collection page is past the last page.
+- status: 410
+  title: Already trashed
+  operations: [deleteEvent, deleteOrganizer, deleteVenue]
+  detail: The entity has already been moved to the trash (both namespaces); a second delete is not idempotent and answers 410 Gone.
+  remediation: Treat 410 on a repeated delete as success; pass force=true to delete permanently.
+- status: 500
+  title: Operation failed
+  operations: [createEvent, updateEvent, deleteEvent, createOrganizer, updateOrganizer, deleteOrganizer, createVenue, updateVenue, deleteVenue]
+  detail: The plugin could not create, update or delete the entity (server-side persistence failure).
+- status: 501
+  title: Trashing not supported
+  operations: [deleteEvent, deleteOrganizer, deleteVenue]
+  detail: '"The event does not support trashing. Set force=true to delete" — the post type is configured without a trash, so only a forced permanent delete is possible.'
+  remediation: Retry with force=true; note this is irreversible.
+counts:
+  tec_v1_declared: {'400': 12, '401': 9, '403': 9, '404': 9, '410': 3, '500': 9, '501': 3}
+  tribe_events_v1_status_codes: ['400', '403', '404', '410', '500']

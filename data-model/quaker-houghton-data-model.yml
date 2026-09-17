@@ -1,0 +1,94 @@
+generated: '2026-09-17'
+method: derived
+source: >-
+  components.schemas and $ref links in openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+  (the fuller of the two documents) and openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+description: >-
+  Entity-relationship graph of the Events Calendar data served by home.quakerhoughton.com. Three
+  first-class entities — Event, Venue, Organizer — plus the Term taxonomy (categories and tags)
+  and value objects for images, dates and cost. Relationships are read from $ref links and from
+  the venue/organizer/categories/tags reference fields on Event. The tec/v1 document declares
+  Event, Organizer and Venue as empty object schemas over a shared TEC_Post_Entity base, so the
+  stable document is the one that carries the field-level model.
+entities:
+- name: Event
+  source: tribe/events/v1#/components/schemas/Event
+  id_field: id (integer WordPress post ID); global_id and global_id_lineage for cross-site identity; slug for by-slug lookup
+  fields: 39
+  key_fields: [id, global_id, title, description, slug, url, rest_url, status, all_day, start_date, end_date, utc_start_date, utc_end_date, timezone, cost, website, featured, hide_from_listings, sticky]
+- name: Venue
+  source: tribe/events/v1#/components/schemas/Venue
+  id_field: id
+  fields: 28
+- name: Organizer
+  source: tribe/events/v1#/components/schemas/Organizer
+  id_field: id
+  fields: 18
+- name: Term
+  source: tribe/events/v1#/components/schemas/Term
+  id_field: id (taxonomy term ID); taxonomy distinguishes event categories from event tags
+  fields: 9
+- name: Image
+  kind: value_object
+  fields: 6
+- name: ImageSize
+  kind: value_object
+  fields: 4
+- name: DateDetails
+  kind: value_object
+  fields: 6
+- name: CostDetails
+  kind: value_object
+  fields: 3
+- name: TEC_Post_Entity
+  source: tec/v1#/components/schemas/TEC_Post_Entity
+  kind: base
+  fields: 22
+  note: Shared base of Event, Organizer and Venue in the experimental namespace.
+relationships:
+- from: Event
+  to: Venue
+  type: belongs_to
+  via: venue
+- from: Event
+  to: Organizer
+  type: has_many
+  via: organizer
+- from: Event
+  to: Term
+  type: has_many
+  via: categories
+- from: Event
+  to: Term
+  type: has_many
+  via: tags
+- from: Event
+  to: Image
+  type: has_one
+  via: image
+- from: Event
+  to: DateDetails
+  type: has_one
+  via: start_date_details, end_date_details, utc_start_date_details, utc_end_date_details
+- from: Event
+  to: CostDetails
+  type: has_one
+  via: cost_details
+- from: Venue
+  to: Image
+  type: has_one
+  via: image
+- from: Organizer
+  to: Image
+  type: has_one
+  via: image
+- from: Image
+  to: ImageSize
+  type: has_many
+  via: sizes
+- from: tec/v1 DateDetails
+  to: tec/v1 Date
+  type: has_one
+  via: start, start_utc, start_site, start_display, end, end_utc, end_site, end_display
+id_prefixes: none (plain integer WordPress IDs; global_id is a URL-derived string)
+render: null

@@ -1,0 +1,29 @@
+generated: '2026-09-17'
+method: searched
+source: >-
+  registry.npmjs.org search (quakerhoughton, "quaker houghton"), pypi.org/pypi/quakerhoughton/json,
+  api.github.com/search/users?q=quakerhoughton, api.github.com/orgs/quakerhoughton,
+  api.github.com/orgs/quaker-houghton, and the home.quakerhoughton.com page sitemap (679 URLs)
+description: >-
+  Quaker Houghton publishes no client library, SDK, CLI or package on any registry. npm search for
+  the name returns zero matches (a "quaker houghton" phrase search returns only unrelated
+  @svg-maps packages by fuzzy match); PyPI has no quakerhoughton project; GitHub has no
+  organization or user named quakerhoughton or quaker-houghton. An honest empty inventory —
+  recorded so a later run does not repeat the search or mistake a fuzzy hit for a first-party SDK.
+packages: []
+sdk_count: 0
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://registry.npmjs.org/-/v1/search?text=quakerhoughton&size=3
+    status: 200
+    result: '{"objects":[],"total":0}'
+  - url: https://pypi.org/pypi/quakerhoughton/json
+    status: 404
+  - url: https://api.github.com/orgs/quakerhoughton
+    status: 404
+  - url: https://api.github.com/orgs/quaker-houghton
+    status: 404
+  - url: https://api.github.com/search/users?q=quakerhoughton
+    status: 200
+    result: total_count 0

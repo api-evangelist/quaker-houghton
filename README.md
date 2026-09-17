@@ -64,7 +64,7 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Quaker Houghton is a major US corporation and Fortune 1000 company. The Quaker Houghton API provides programmatic access to its platform services, data, and integrations for enterprise customers and partners.
+Quaker Houghton (NYSE: KWR) is a global industrial process fluids company headquartered in Conshohocken, Pennsylvania, formed by the 2019 combination of Quaker Chemical and Houghton International. It makes metalworking, metal rolling, casting, forging and hydraulic fluids for the steel, aluminum, automotive, aerospace and machinery industries, and sells fluid management services under the QH Fluid Intelligence brand. It publishes no public API, developer portal or machine-readable contract; the only machine surfaces are the Events Calendar REST APIs and an OAuth-gated MCP server on its corporate WordPress host.
 
 **URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/quaker-houghton/refs/heads/main/apis.yml)
 
@@ -72,12 +72,12 @@ Quaker Houghton is a major US corporation and Fortune 1000 company. The Quaker H
 
 ## Tags:
 
- - Industrial Fluids, Chemical, Manufacturing
+ - Industrial Fluids, Chemicals, Manufacturing
 
 ## Timestamps
 
 - **Created:** 2026-04-19
-- **Modified:** 2026-04-19
+- **Modified:** 2026-09-17
 
 ## Maintainers
 

@@ -1,0 +1,48 @@
+generated: '2026-09-17'
+method: derived
+source: >-
+  https://home.quakerhoughton.com/wp-json/ (namespace index), the two served OpenAPI documents,
+  and the live 400 missing_experimental_endpoint_acknowledgement response on tec/v1
+description: >-
+  Lifecycle posture for the machine surfaces on home.quakerhoughton.com. Quaker Houghton publishes
+  no versioning policy, deprecation policy, SLA, status page or changelog of its own; the only
+  lifecycle facts available are the ones the WordPress REST index and the plugin contracts state
+  about themselves. Two generations of the same Events Calendar API coexist: the stable
+  tribe/events/v1 namespace and the experimental tec/v1 namespace that the plugin gates behind an
+  acknowledgement header until it is declared stable.
+versioning:
+  scheme: URL path namespace (/wp-json/<namespace>/v1)
+  current:
+  - namespace: tribe/events/v1
+    status: stable
+    contract: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+  - namespace: tec/v1
+    status: experimental
+    contract: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+    gate: Data endpoints answer 400 missing_experimental_endpoint_acknowledgement until the caller opts in with the plugin's acknowledgement header.
+  - namespace: mcp
+    status: "published, OAuth-gated"
+    contract: null
+  policy_published: false
+deprecation:
+  policy_published: false
+  headers: "none observed (no Deprecation or Sunset per RFC 8594)"
+  deprecated_operations: []
+  note: "Neither OpenAPI document marks any operation deprecated: true."
+status_page:
+  present: false
+  note: No status.quakerhoughton.com or third-party status page was found.
+sla:
+  published: false
+changelog:
+  published: false
+  note: The Events Calendar plugin's own changelog is StellarWP's, not Quaker Houghton's, and is not linked from the site.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/wp-json/
+    status: 200
+  - url: https://home.quakerhoughton.com/wp-json/tec/v1/events
+    status: 400
+  - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/events?per_page=2
+    status: 200

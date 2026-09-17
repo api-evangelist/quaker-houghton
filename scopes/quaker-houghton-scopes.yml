@@ -1,0 +1,48 @@
+generated: '2026-09-17'
+method: probed
+source: https://home.quakerhoughton.com/.well-known/oauth-authorization-server
+docs: null
+description: >-
+  Quaker Houghton's only public OAuth surface is the authorization server advertised on
+  home.quakerhoughton.com for its remote MCP server. It declares a single coarse scope, `mcp`.
+  There is no scope or permission reference anywhere on the site, and no other Quaker Houghton
+  host publishes RFC 8414 or OIDC discovery metadata. The Events Calendar REST APIs on the same
+  host have no OAuth surface at all — their reads are anonymous and their writes declare HTTP
+  Basic (WordPress Application Passwords).
+schemes:
+- name: QuakerHoughtonMCPOAuth
+  type: oauth2
+  source: https://home.quakerhoughton.com/.well-known/oauth-authorization-server
+  issuer: https://home.quakerhoughton.com
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://home.quakerhoughton.com/oauth/authorize
+    tokenUrl: https://home.quakerhoughton.com/oauth/token
+    revocationUrl: https://home.quakerhoughton.com/oauth/revoke
+    pkce: required
+    code_challenge_methods: [S256]
+    refresh_tokens: true
+    client_authentication: none (public client)
+    dynamic_client_registration: >-
+      No RFC 7591 registration_endpoint. The server advertises
+      client_id_metadata_document_supported: true, so clients identify themselves with a
+      client-ID metadata document URL rather than pre-registering.
+scopes:
+- scope: mcp
+  description: >-
+    Access the MCP server at https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server.
+    Coarse, single-scope model — the authorization server advertises no finer-grained
+    read/write split.
+  flows: [authorizationCode]
+  sources: [https://home.quakerhoughton.com/.well-known/oauth-authorization-server]
+  protected_resource: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+not_applicable:
+- surface: Events Calendar REST APIs (tribe/events/v1, tec/v1)
+  reason: No oauth2 securityScheme; reads are anonymous, writes declare HTTP Basic.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/.well-known/oauth-authorization-server/
+    status: 200
+  - url: https://home.quakerhoughton.com/.well-known/oauth-protected-resource/
+    status: 200

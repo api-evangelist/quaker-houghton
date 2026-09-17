@@ -4,27 +4,34 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Quaker Houghton
 providerId: quaker-houghton
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
+# Re-checked 2026-09-17 by the enrichment pipeline: no limit is documented anywhere and no
+# rate-limit header is returned by the live Events Calendar API. An honest zero, recorded as searched.
+method: searched
+generated: '2026-09-17'
+modified: '2026-09-17'
+reconciled: true
+limit_count: 0
 tags:
   - Industrial Fluids
   - Chemical
   - Rate Limiting
-notes: No public Quaker Houghton API or developer documentation is published; rate-limit reconciliation
-  is not possible without an enterprise customer engagement.
+notes: No public Quaker Houghton API or developer documentation is published. The Events Calendar REST
+  API on home.quakerhoughton.com answered a live anonymous GET (2026-09-17) with no X-RateLimit-*,
+  RateLimit-* or Retry-After header; the only edge in front of it is Cloudflare (cf-ray, cf-cache-status).
 description: Quaker Houghton does not publish a public API rate-limit document; any per-customer limits
   are governed by the enterprise integration agreement.
 sources:
   - https://home.quakerhoughton.com/
-limits:
-  - name: Per-Engagement Limit
-    scope: contract
-    metric: varies
-    limit: see enterprise engagement
-    notes: No public limits documented.
+limits: []
+response_headers:
+  observed: []
+  note: No rate-limit headers on https://home.quakerhoughton.com/wp-json/tribe/events/v1/events (HTTP 200, 2026-09-17).
+exhaustion_status: unknown
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/events?per_page=2
+    status: 200
 policies:
   - name: Engagement-Scoped Limits
     description: Any rate-limit or quota terms are negotiated as part of the enterprise integration

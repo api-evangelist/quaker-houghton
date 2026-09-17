@@ -1,0 +1,67 @@
+generated: '2026-09-17'
+method: derived
+source: mcp/quaker-houghton-mcp.yml + openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json + openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+description: >-
+  Crosswalk between Quaker Houghton's agent-facing MCP surface and its machine-readable REST
+  surface. Both live on the same WordPress host. The MCP server's tool list is OAuth-gated and
+  the provider publishes no inventory, so no tool can be bound to an operation without
+  fabricating one; the crosswalk is therefore empty and every published REST operation is
+  recorded as rest_only. The one honest inference — that a WordPress MCP Adapter server built on
+  the Abilities API is likely to expose site content rather than the Events Calendar
+  endpoints — is recorded as a note, not as a binding.
+surfaces:
+  openapi:
+  - file: openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+    spec: OpenAPI 3.0.0
+    published_at: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+    gated: false
+    operations: 30
+    note: Reads answer anonymously (HTTP 200, total 0 events on 2026-09-17); writes need WordPress auth.
+  - file: openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+    spec: OpenAPI 3.0.4
+    published_at: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+    gated: partial
+    operations: 16
+    note: Every data endpoint answers 400 missing_experimental_endpoint_acknowledgement without the plugin's acknowledgement header.
+  mcp:
+    url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+    gated: true
+    gate: OAuth 2.1 bearer (scope `mcp`); anonymous tools/list returns 401 mcp_unauthorized
+    tools_enumerated: false
+  graphql:
+    present: false
+    note: No /graphql route in the WordPress REST index and no GraphQL endpoint on any host.
+crosswalk: []
+mcp_only: []
+rest_only:
+- capability: Events
+  surface: tec/v1 (operationIds declared)
+  operation_ids: [getEvents, getEvent, createEvent, updateEvent, deleteEvent]
+- capability: Events
+  surface: tribe/events/v1 (the document declares NO operationIds; paths listed instead)
+  paths: ['/events', '/events/{id}', '/events/by-slug/{slug}']
+  methods: [get, post, delete]
+- capability: Venues
+  surface: tec/v1
+  operation_ids: [getVenues, getVenue, createVenue, updateVenue, deleteVenue]
+- capability: Venues
+  surface: tribe/events/v1
+  paths: ['/venues', '/venues/{id}', '/venues/by-slug/{slug}']
+- capability: Organizers
+  surface: tec/v1
+  operation_ids: [getOrganizers, getOrganizer, createOrganizer, updateOrganizer, deleteOrganizer]
+- capability: Organizers
+  surface: tribe/events/v1
+  paths: ['/organizers', '/organizers/{id}', '/organizers/by-slug/{slug}']
+- capability: Categories and tags
+  surface: tribe/events/v1 only
+  paths: ['/categories', '/categories/{id}', '/tags', '/tags/{id}']
+- capability: Contract self-description
+  operation_ids: [getOpenApiDocs]
+  paths: ['/doc', '/docs']
+coverage:
+  tools_total: null
+  tools_bound: 0
+  rest_operations_total: 46
+  rest_operations_bound: 0
+  note: tools_total is unknown because enumeration is gated; nothing is bound.

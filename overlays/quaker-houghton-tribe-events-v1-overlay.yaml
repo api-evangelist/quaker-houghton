@@ -1,0 +1,64 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Quaker Houghton Events Calendar tribe/events/v1 API
+  version: 1.0.0
+extends: ../openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+x-provenance:
+  generated: '2026-09-17'
+  method: generated
+  source: >-
+    The contract served at https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc (HTTP 200,
+    fetched 2026-09-17) and live probes of the namespace. The original document is published by
+    the host and is never mutated.
+actions:
+- target: $.info
+  update:
+    x-api-evangelist-ownership: >-
+      servers[] names https://home.quakerhoughton.com/wp-json/tribe/events/v1/ — Quaker Houghton's
+      own corporate host, describing its own event, venue and organizer records. info carries no
+      contact; the prose is authored by The Events Calendar plugin (StellarWP), not by Quaker
+      Houghton. This is the self-hosted/templated-server case; the spec belongs to this
+      installation even though the vendor wrote the description document.
+    x-api-evangelist-harvest:
+      url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+      status: 200
+      fetched: '2026-09-17'
+    x-api-evangelist-surface-note: >-
+      A CMS plugin surface, not a product API. The calendar served was EMPTY when probed
+      (GET /events answered HTTP 200 with total 0, total_pages 0). Quaker Houghton's real digital
+      products (QH Fluid Intelligence, FluidTrend, Insight Web) expose no public API.
+    x-api-evangelist-operation-ids: >-
+      The served document declares NO operationId on any of its 30 operations. Consumers that need
+      stable identifiers should key on method + path; the sibling tec/v1 document does carry
+      operationIds (getEvents, getEvent, createEvent, ...).
+- target: $.info
+  update:
+    x-api-evangelist-authentication: >-
+      No securitySchemes are declared. Reads are anonymous (verified live). POST and DELETE are
+      enforced by WordPress capability checks and need HTTP Basic with an Application Password —
+      credentials Quaker Houghton does not issue publicly. See ../authentication/quaker-houghton-authentication.yml.
+- target: $.paths['/events'].get
+  update:
+    x-api-evangelist-pagination: >-
+      page / per_page query parameters; the body carries events[], total, total_pages and rest_url,
+      and the response exposes X-WP-Total, X-WP-TotalPages and an RFC 5988 Link header. The default
+      window is today through two years ahead (observed in rest_url start_date / end_date).
+    x-api-evangelist-live-probe:
+      url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/events?per_page=2
+      status: 200
+      total: 0
+      fetched: '2026-09-17'
+- target: $.paths['/events/{id}'].delete
+  update:
+    x-api-evangelist-reversibility: >-
+      DELETE trashes the event; a second DELETE answers 410 Gone. No untrash/restore operation is
+      exposed and no trash retention window is stated — grade none. See
+      ../conventions/quaker-houghton-conventions.yml#reversibility.
+- target: $
+  update:
+    x-api-evangelist-related:
+      errors: ../errors/quaker-houghton-problem-types.yml
+      conventions: ../conventions/quaker-houghton-conventions.yml
+      data_model: ../data-model/quaker-houghton-data-model.yml
+      lifecycle: ../lifecycle/quaker-houghton-lifecycle.yml
+      conformance: ../conformance/quaker-houghton-conformance.yml

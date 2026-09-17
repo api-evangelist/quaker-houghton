@@ -1,0 +1,59 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Quaker Houghton Events Calendar tec/v1 API
+  version: 1.0.0
+extends: ../openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+x-provenance:
+  generated: '2026-09-17'
+  method: generated
+  source: >-
+    The contract served at https://home.quakerhoughton.com/wp-json/tec/v1/docs (HTTP 200,
+    OpenAPI 3.0.4, fetched 2026-09-17) and live probes of every collection route. The original
+    document is published by the host and is never mutated.
+actions:
+- target: $.info
+  update:
+    x-api-evangelist-ownership: >-
+      servers[] names https://home.quakerhoughton.com/wp-json/tec/v1 — Quaker Houghton's own
+      corporate host. info.contact names The Events Calendar (support@theeventscalendar.com)
+      because the PLUGIN authors this description document, not the company. Self-hosted /
+      templated-server case; the spec belongs to this installation.
+    x-api-evangelist-harvest:
+      url: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+      status: 200
+      fetched: '2026-09-17'
+    x-api-evangelist-not-anonymously-callable: >-
+      THE CENTRAL CAVEAT. Every data route (/events, /venues, /organizers) returned HTTP 400
+      {"code":"missing_experimental_endpoint_acknowledgement"} on 2026-09-17: the plugin marks this
+      namespace experimental and refuses calls that do not send its acknowledgement header. Only
+      /docs answers. Use the stable tribe/events/v1 namespace for real reads.
+- target: $.paths['/events'].get
+  update:
+    x-api-evangelist-live-probe:
+      url: https://home.quakerhoughton.com/wp-json/tec/v1/events
+      status: 400
+      code: missing_experimental_endpoint_acknowledgement
+      fetched: '2026-09-17'
+- target: $.paths['/events'].post
+  update:
+    x-api-evangelist-idempotency: >-
+      No Idempotency-Key or equivalent; a retried create produces a duplicate event. Coverage none —
+      see ../conventions/quaker-houghton-conventions.yml#idempotency.
+- target: $.paths['/events/{id}'].delete
+  update:
+    x-api-evangelist-reversibility: >-
+      Trash by default (410 on repeat, 501 when the post type has no trash, force=true for a permanent
+      delete). No restore operation and no stated window — grade none.
+- target: $.components.securitySchemes.BasicAuth
+  update:
+    x-api-evangelist-credential: >-
+      WordPress username + Application Password. Quaker Houghton offers no signup, so this scheme is
+      reachable only by the company's own site administrators.
+- target: $
+  update:
+    x-api-evangelist-related:
+      errors: ../errors/quaker-houghton-problem-types.yml
+      conventions: ../conventions/quaker-houghton-conventions.yml
+      data_model: ../data-model/quaker-houghton-data-model.yml
+      lifecycle: ../lifecycle/quaker-houghton-lifecycle.yml
+      authentication: ../authentication/quaker-houghton-authentication.yml

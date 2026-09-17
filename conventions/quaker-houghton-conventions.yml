@@ -1,0 +1,128 @@
+generated: '2026-09-17'
+method: derived
+source: >-
+  openapi/_original/quaker-houghton-tec-v1-openapi-original.json,
+  openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json, live response headers
+  from https://home.quakerhoughton.com/wp-json/tribe/events/v1/events, and the RFC 8414 / RFC 9728
+  documents on home.quakerhoughton.com. Quaker Houghton publishes no conventions documentation of
+  its own; every statement here is read from a served contract or an observed response.
+description: >-
+  Cross-cutting runtime semantics of the REST and MCP surfaces on home.quakerhoughton.com — the
+  WordPress REST conventions the Events Calendar plugin inherits (page/per_page pagination with
+  X-WP-Total headers, the {code, message, data.status} error envelope, HTTP Basic on writes) and
+  the OAuth 2.1 + PKCE posture of the MCP server. There is no idempotency mechanism, no request-id
+  header, no field expansion and no rate-limit signalling.
+
+base_urls:
+  events_stable: https://home.quakerhoughton.com/wp-json/tribe/events/v1
+  events_experimental: https://home.quakerhoughton.com/wp-json/tec/v1
+  mcp: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+api_style: REST over HTTPS, JSON responses (WordPress REST API), plus MCP over HTTP (JSON-RPC 2.0)
+
+authentication:
+  scheme: anonymous reads; HTTP Basic (WordPress Application Password) on Events writes; OAuth 2.1 authorization code + PKCE (scope `mcp`) on the MCP server
+  detail: authentication/quaker-houghton-authentication.yml
+  scopes: scopes/quaker-houghton-scopes.yml
+
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  applies_to: null
+  note: >-
+    Neither contract declares an Idempotency-Key header or any replay-protection mechanism.
+    PUT updates are idempotent by HTTP semantics; POST creates are not, and a repeated DELETE
+    answers 410 Gone rather than replaying the original success.
+
+pagination:
+  style: offset (page number)
+  request_params:
+    page: collection page number, default 1, minimum 1
+    per_page: items per page (default 10 on tribe/events/v1; the served URL shows per_page in rest_url)
+  response_fields:
+    events: array of results (tribe/events/v1 wraps the list under the resource name)
+    total: total matching items (tribe/events/v1 body)
+    total_pages: total pages (tribe/events/v1 body)
+    rest_url: the canonical URL of the page served
+  response_headers:
+    X-WP-Total: total number of matching items (declared required on every tec/v1 collection GET)
+    X-WP-TotalPages: total pages
+    Link: RFC 5988 next/prev links
+  observed: access-control-expose-headers X-WP-Total, X-WP-TotalPages, Link on the live tribe/events/v1 response
+
+filtering:
+  events: start_date, end_date, starts_before, starts_after, ends_before, ends_after, search, categories, tags, venue, organizer, featured, status, post_parent, ticketed, orderby, order
+  default_window: tribe/events/v1 defaults to events starting today through two years ahead (observed in rest_url start_date/end_date)
+
+field_expansion:
+  supported: false
+sparse_fields:
+  supported: false
+metadata:
+  supported: false
+
+request_tracing:
+  request_id_header: null
+  note: No request-id header is declared or observed; Cloudflare's cf-ray header is the only per-request identifier.
+
+versioning:
+  scheme: URL namespace (tribe/events/v1 stable, tec/v1 experimental)
+  detail: lifecycle/quaker-houghton-lifecycle.yml
+
+errors:
+  envelope: '{"code", "message", "data": {"status"}}' 
+  content_type: application/json
+  problem_json: false
+  detail: errors/quaker-houghton-problem-types.yml
+
+rate_limits:
+  documented: false
+  headers: none observed (no X-RateLimit-*, RateLimit-* or Retry-After)
+  detail: rate-limits/quaker-houghton-rate-limits.yml
+
+dry_run_mode:
+  supported: false
+  note: No dry-run, validate-only or preview parameter is declared on any write.
+
+reversibility:
+  grade: none
+  write_surfaces:
+  - operation: deleteEvent
+    reversal: null
+    window: null
+    note: >-
+      DELETE moves the event to the WordPress trash by default (a second delete answers 410 "already
+      trashed"; force=true deletes permanently; 501 when the post type has no trash). Restoring a
+      trashed item is a WordPress admin action — NO restore/untrash operation exists in either
+      contract, and no retention window for the trash is stated, so nothing is credited.
+  - operation: deleteVenue
+    reversal: null
+    window: null
+    note: Same trash semantics as deleteEvent; no contract-level restore.
+  - operation: deleteOrganizer
+    reversal: null
+    window: null
+    note: Same trash semantics as deleteEvent; no contract-level restore.
+  - operation: createEvent / createVenue / createOrganizer
+    reversal: deleteEvent / deleteVenue / deleteOrganizer
+    window: null
+    note: A create can be undone by the matching delete, but that is ordinary CRUD, not a documented reversal path, and no window is stated.
+  - operation: updateEvent / updateVenue / updateOrganizer
+    reversal: null
+    note: No revision or rollback operation is exposed.
+  docs: null
+  note: >-
+    Quaker Houghton documents nothing about reversal. The plugin's trash behaviour is real
+    (declared in the 410/501 responses) but is not a reversal operation an agent can call, so the
+    honest grade is none rather than documented.
+
+consent_identity:
+  supported: partial
+  note: The MCP server's OAuth 2.1 flow is a user-consent flow (authorization code, public client, PKCE); the Events APIs have no delegated identity.
+
+cross_links:
+  errors: errors/quaker-houghton-problem-types.yml
+  lifecycle: lifecycle/quaker-houghton-lifecycle.yml
+  authentication: authentication/quaker-houghton-authentication.yml
+  rate_limits: rate-limits/quaker-houghton-rate-limits.yml
+  conformance: conformance/quaker-houghton-conformance.yml

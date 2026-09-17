@@ -1,0 +1,23 @@
+generated: '2026-09-17'
+method: generated
+source: >-
+  Grounded in the paths declared verbatim in
+  openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json (which carries no
+  operationIds) and the operationIds in openapi/_original/quaker-houghton-tec-v1-openapi-original.json,
+  plus the semantics in conventions/quaker-houghton-conventions.yml and errors/quaker-houghton-problem-types.yml.
+description: >-
+  Packaged agent skills for the only anonymously callable surface on home.quakerhoughton.com. One
+  skill, deliberately: the Events Calendar read path is the whole public surface, the calendar was
+  empty when probed, and every write is gated by credentials the company does not issue. No
+  provider-published skills or AGENTS.md were found on any host, so this is generated.
+skills:
+- file: quaker-houghton-list-upcoming-events.md
+  name: List Quaker Houghton upcoming events
+  api: openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+  operations:
+  - GET /events
+  - GET /events/{id}
+  - GET /venues/{id}
+  - GET /organizers/{id}
+  related_operation_ids: [getEvents, getEvent, getVenue, getOrganizer]
+  auth: none

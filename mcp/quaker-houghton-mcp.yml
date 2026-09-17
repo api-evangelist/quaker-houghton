@@ -1,0 +1,96 @@
+generated: '2026-09-17'
+method: searched
+source: https://home.quakerhoughton.com/.well-known/oauth-protected-resource
+status: published
+description: >-
+  Quaker Houghton serves a remote Model Context Protocol server on its corporate WordPress host.
+  It is not announced anywhere — no MCP registry entry, no documentation page, no llms.txt — and
+  was found by probing /.well-known/* on home.quakerhoughton.com, which returns both RFC 8414
+  authorization-server metadata and RFC 9728 protected-resource metadata naming the endpoint. The
+  implementation is the WordPress MCP Adapter plugin (REST namespace `mcp`, alongside the
+  `wp-abilities/v1` Abilities API), so the server fronts the website's content estate — posts,
+  pages, media — not the QH Fluid Intelligence platform or any fluid-management product.
+server:
+  name: quaker-houghton
+  transport: http
+  url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+  protocol: MCP over HTTP (JSON-RPC 2.0)
+  implementation: >-
+    WordPress MCP Adapter — REST routes /wp-json/mcp/mcp-oauth-server (OAuth-gated) and
+    /wp-json/mcp/mcp-adapter-default-server (WordPress-session gated), each accepting POST, GET and
+    DELETE. Backed by the wp-abilities/v1 Abilities API, which also answers 401 anonymously.
+  secondary_endpoints:
+  - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-adapter-default-server
+    gate: WordPress authentication (rest_forbidden 401 anonymously); no OAuth challenge is issued.
+authorization:
+  required: true
+  model: OAuth 2.1 authorization code with PKCE
+  challenge: >-
+    WWW-Authenticate: Bearer realm="https://home.quakerhoughton.com",
+    resource_metadata="https://home.quakerhoughton.com/.well-known/oauth-protected-resource"
+  authorization_servers:
+  - https://home.quakerhoughton.com
+  issuer: https://home.quakerhoughton.com
+  authorization_endpoint: https://home.quakerhoughton.com/oauth/authorize
+  token_endpoint: https://home.quakerhoughton.com/oauth/token
+  revocation_endpoint: https://home.quakerhoughton.com/oauth/revoke
+  grant_types_supported:
+  - authorization_code
+  - refresh_token
+  response_types_supported:
+  - code
+  code_challenge_methods_supported:
+  - S256
+  token_endpoint_auth_methods_supported:
+  - none
+  client_id_metadata_document_supported: true
+  authorization_response_iss_parameter_supported: true
+  bearer_methods_supported:
+  - header
+  scopes_supported:
+  - mcp
+  detail: scopes/quaker-houghton-scopes.yml
+tools:
+  discovered: false
+  discovery_method: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json, text/event-stream'
+  http_status: 401
+  response: '{"code":"mcp_unauthorized","message":"MCP authentication required.","data":{"status":401}}'
+  note: >-
+    The live tool list and per-tool inputSchema are auth-gated. Quaker Houghton publishes no tool
+    inventory anywhere, so NO tool list is recorded — deriving one would be fabrication.
+    Authenticated introspection (an OAuth client presenting a client-ID metadata document) is
+    required to enumerate the surface.
+related_surfaces:
+  openapi:
+  - openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+  - openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+  note: >-
+    The only OpenAPI documents the host publishes describe The Events Calendar plugin's REST
+    namespaces; whether the MCP server exposes those events as tools cannot be established
+    anonymously. See mcp/quaker-houghton-tool-crosswalk.yml.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/.well-known/oauth-protected-resource/
+    status: 200
+    content_type: application/json
+  - url: https://home.quakerhoughton.com/.well-known/oauth-authorization-server/
+    status: 200
+    content_type: application/json
+  - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+    method: POST tools/list
+    status: 401
+  - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-adapter-default-server
+    method: POST tools/list
+    status: 401
+  - url: https://home.quakerhoughton.com/wp-json/mcp
+    status: 200
+  - url: https://home.quakerhoughton.com/wp-json/wp-abilities/v1/abilities
+    status: 401
+deployment:
+  mode: remote
+  endpoint: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+  auth: oauth
+  verified: probed
+  probe: gated
+  checked: '2026-09-17'

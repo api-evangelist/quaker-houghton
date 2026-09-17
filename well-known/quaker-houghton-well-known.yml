@@ -1,0 +1,100 @@
+generated: '2026-09-17'
+method: probed
+source: probed /.well-known/* on every Quaker Houghton host the record knows
+description: >-
+  Well-known discovery surface for Quaker Houghton. The company's registrable domain redirects
+  every path (301) to home.quakerhoughton.com, a WordPress corporate site. That host publishes
+  BOTH RFC 8414 OAuth authorization-server metadata and RFC 9728 OAuth protected-resource
+  metadata, and the protected-resource document points at a remote MCP server at
+  https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server. No security.txt (RFC 9116), no
+  api-catalog (RFC 9727), no OIDC discovery document, no ai-plugin.json and no A2A agent card
+  were found on any host. The api.quakerhoughton.com and developer.quakerhoughton.com hosts
+  carried by the previous stub resolve only through a wildcard A record, present a certificate
+  for a different name, and answer 406 over plain HTTP — they are not API hosts.
+hosts:
+- host: https://home.quakerhoughton.com
+  documents:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: quaker-houghton-oauth-authorization-server.json
+    note: >-
+      RFC 8414 — served after a 301 to the trailing-slash form. issuer https://home.quakerhoughton.com,
+      authorization_code + refresh_token grants, PKCE S256, single scope `mcp`, public clients
+      (token_endpoint_auth_methods_supported: none), client_id_metadata_document_supported: true.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: quaker-houghton-oauth-protected-resource.json
+    note: >-
+      RFC 9728 — resource https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server,
+      authorization_servers [https://home.quakerhoughton.com], bearer in header, scope `mcp`.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: https://www.quakerhoughton.com
+  note: Every path 301s to the same path on home.quakerhoughton.com; the documents above are the result.
+  documents:
+  - path: /.well-known/security.txt
+    status: 301
+  - path: /.well-known/openid-configuration
+    status: 301
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+  - path: /.well-known/api-catalog
+    status: 301
+  - path: /.well-known/ai-plugin.json
+    status: 301
+  - path: /.well-known/agent-card.json
+    status: 301
+  - path: /.well-known/agent.json
+    status: 301
+- host: https://api.quakerhoughton.com
+  note: >-
+    Wildcard DNS (104.193.143.84, same as every other subdomain); TLS certificate does not match the
+    hostname and plain HTTP answers 406. Not a served host — every probe failed at the TLS handshake.
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 0
+    reason: tls-hostname-mismatch
+  - path: /openapi.json
+    status: 0
+    reason: tls-hostname-mismatch
+- host: https://developer.quakerhoughton.com
+  note: Same wildcard record and certificate mismatch as api.quakerhoughton.com; no developer portal exists.
+  documents:
+  - path: /
+    status: 0
+    reason: tls-hostname-mismatch
+security_txt:
+  present: false
+  note: >-
+    No RFC 9116 security.txt at /.well-known/security.txt or /security.txt on home.quakerhoughton.com.
+    The site's /cyber-security/ page is a fraud-awareness notice for customers and suppliers, not a
+    vulnerability-disclosure policy.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/.well-known/oauth-authorization-server/
+    status: 200
+  - url: https://home.quakerhoughton.com/.well-known/oauth-protected-resource/
+    status: 200
+  - url: https://home.quakerhoughton.com/.well-known/security.txt
+    status: 404
+  - url: https://home.quakerhoughton.com/.well-known/agent-card.json
+    status: 404
+  - url: https://home.quakerhoughton.com/.well-known/agent.json
+    status: 404
+  - url: https://www.quakerhoughton.com/.well-known/security.txt
+    status: 301
+  - url: https://api.quakerhoughton.com/openapi.json
+    status: 0

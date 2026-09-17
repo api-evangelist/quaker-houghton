@@ -1,0 +1,70 @@
+generated: '2026-09-17'
+method: searched
+source: >-
+  openapi/_original/quaker-houghton-tec-v1-openapi-original.json (components.securitySchemes),
+  openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json,
+  https://home.quakerhoughton.com/.well-known/oauth-authorization-server,
+  https://home.quakerhoughton.com/.well-known/oauth-protected-resource, and the
+  WWW-Authenticate challenge observed on the MCP endpoint
+docs: null
+description: >-
+  Authentication profile for every machine surface home.quakerhoughton.com publishes. Three
+  distinct postures coexist on one host: anonymous keyless reads on the Events Calendar APIs,
+  HTTP Basic (WordPress Application Passwords) on their writes, and OAuth 2.1 with PKCE on the
+  MCP server. Quaker Houghton publishes no authentication documentation of its own — every
+  fact here is read from a served contract or discovery document.
+schemes:
+- name: BasicAuth
+  type: http
+  scheme: basic
+  surfaces: [tec/v1]
+  applies_to: >-
+    createEvent, updateEvent, deleteEvent, createOrganizer, updateOrganizer, deleteOrganizer,
+    createVenue, updateVenue, deleteVenue (every write in tec/v1). Every read declares security: [].
+  source: openapi/_original/quaker-houghton-tec-v1-openapi-original.json#/components/securitySchemes/BasicAuth
+  credential: WordPress username + Application Password (the plugin's standard mechanism); no public signup exists.
+- name: anonymous
+  type: none
+  surfaces: [tribe/events/v1 reads, tec/v1 reads]
+  evidence: >-
+    GET https://home.quakerhoughton.com/wp-json/tribe/events/v1/events answered HTTP 200 with no
+    credentials on 2026-09-17 (total 0 events). The tribe/events/v1 document declares no
+    securitySchemes at all; its POST/DELETE operations are enforced by WordPress capability checks
+    (rest_forbidden 401) rather than a declared scheme.
+- name: QuakerHoughtonMCPOAuth
+  type: oauth2
+  surfaces: [MCP server https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server]
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://home.quakerhoughton.com/oauth/authorize
+    tokenUrl: https://home.quakerhoughton.com/oauth/token
+    refreshUrl: https://home.quakerhoughton.com/oauth/token
+    revocationUrl: https://home.quakerhoughton.com/oauth/revoke
+    pkce: required (S256)
+    scopes:
+      mcp: Access the MCP server
+  bearer: header
+  challenge: >-
+    HTTP 401 with WWW-Authenticate: Bearer realm="https://home.quakerhoughton.com",
+    resource_metadata="https://home.quakerhoughton.com/.well-known/oauth-protected-resource"
+  client_registration: "client-ID metadata document (client_id_metadata_document_supported: true); no RFC 7591 endpoint"
+  source: https://home.quakerhoughton.com/.well-known/oauth-authorization-server
+  detail: scopes/quaker-houghton-scopes.yml
+- name: WordPressSession
+  type: cookie-or-basic
+  surfaces: [https://home.quakerhoughton.com/wp-json/mcp/mcp-adapter-default-server, /wp-json/wp-abilities/v1/abilities]
+  evidence: Anonymous requests answer 401 rest_forbidden with no OAuth challenge; standard WordPress REST authentication applies.
+api_keys:
+  issued: false
+  note: No developer portal, signup or key-issuance flow exists anywhere on the Quaker Houghton estate.
+x-evidence:
+  fetched: '2026-09-17'
+  probes:
+  - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/events?per_page=2
+    status: 200
+  - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+    status: 401
+  - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-adapter-default-server
+    status: 401
+  - url: https://home.quakerhoughton.com/wp-json/wp-abilities/v1/abilities
+    status: 401

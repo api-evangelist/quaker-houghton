@@ -28,35 +28,181 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/quaker-houghton.png
 tags:
   - Industrial Fluids
+  - Chemicals
+  - Manufacturing
+  - Metalworking
+  - Lubricants
+  - Events
+  - MCP
+tags_raw:
+  - Industrial Fluids
   - Chemical
   - Manufacturing
+  - Metalworking
+  - Lubricants
+  - Events
+  - MCP
 description: >-
-  Quaker Houghton is a major US corporation and Fortune 1000 company. The Quaker Houghton API provides programmatic access to its platform services, data, and integrations for enterprise customers and partners.
+  Quaker Houghton (NYSE: KWR) is a global industrial process fluids company headquartered in
+  Conshohocken, Pennsylvania, formed by the 2019 combination of Quaker Chemical and Houghton
+  International. It makes metalworking, metal rolling, casting, forging and hydraulic fluids
+  for the steel, aluminum, automotive, aerospace and machinery industries, and sells fluid
+  management services under the QH Fluid Intelligence brand. It publishes no public API,
+  developer portal or machine-readable contract.
 created: '2026-04-19'
-modified: '2026-04-19'
+modified: '2026-09-17'
 specificationVersion: '0.23'
 apis:
-  - aid: quaker-houghton:quaker-houghton-api
-    name: Quaker Houghton API
+  - aid: quaker-houghton:quaker-houghton-events-api
+    name: Quaker Houghton Events API
     tags:
-      - Industrial Fluids
-      - Chemical
-      - Manufacturing
+      - Events
+      - Venues
+      - Organizers
+      - Content Management
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    baseURL: https://api.quakerhoughton.com
-    humanURL: https://developer.quakerhoughton.com
-    properties:
-      - url: https://developer.quakerhoughton.com/docs
-        type: Documentation
+    baseURL: https://home.quakerhoughton.com/wp-json/tribe/events/v1
+    humanURL: https://home.quakerhoughton.com/events/
     description: >-
-      The Quaker Houghton API provides access to platform services and data for enterprise integration and automation.
+      The stable Events Calendar v1 REST API on home.quakerhoughton.com, the corporate site,
+      serving its event calendar as JSON — events with dates, venue, organizer, categories and
+      tags. Read access is anonymous and keyless (30 operations declared across events, venues,
+      organizers, categories and tags; the write half requires WordPress authentication). The
+      contract is published live by the host at /wp-json/tribe/events/v1/doc. This is a
+      self-hosted CMS plugin surface (The Events Calendar), not a product API — and the calendar
+      it serves was empty (total 0) when probed on 2026-09-17.
+    properties:
+      - url: openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
+        type: OpenAPI
+      - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+        type: APIReference
+      - url: errors/quaker-houghton-problem-types.yml
+        type: ErrorCatalog
+      - url: data-model/quaker-houghton-data-model.yml
+        type: DataModel
+      - url: overlays/quaker-houghton-tribe-events-v1-overlay.yaml
+        type: Overlay
+  - aid: quaker-houghton:quaker-houghton-tec-v1-events-api
+    name: Quaker Houghton TEC v1 Events API
+    tags:
+      - Events
+      - Venues
+      - Organizers
+      - Content Management
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+    baseURL: https://home.quakerhoughton.com/wp-json/tec/v1
+    humanURL: https://home.quakerhoughton.com/events/
+    description: >-
+      The newer, experimental Events Calendar `tec/v1` REST namespace on home.quakerhoughton.com:
+      16 operations across events, venues and organizers, with an OpenAPI 3.0.4 document served
+      live at /wp-json/tec/v1/docs and HTTP Basic declared on every write. Every data endpoint
+      currently answers 400 `missing_experimental_endpoint_acknowledgement` until the caller
+      sends the plugin's experimental-acknowledgement header, so the stable tribe/events/v1
+      namespace is the one to call. Self-hosted CMS plugin surface, not a product API.
+    properties:
+      - url: openapi/_original/quaker-houghton-tec-v1-openapi-original.json
+        type: OpenAPI
+      - url: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+        type: APIReference
+      - url: errors/quaker-houghton-problem-types.yml
+        type: ErrorCatalog
+      - url: data-model/quaker-houghton-data-model.yml
+        type: DataModel
+      - url: overlays/quaker-houghton-tec-v1-overlay.yaml
+        type: Overlay
+  - aid: quaker-houghton:quaker-houghton-mcp-server
+    name: Quaker Houghton MCP Server
+    tags:
+      - MCP
+      - Content Management
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+    baseURL: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+    humanURL: https://home.quakerhoughton.com/
+    description: >-
+      A remote Model Context Protocol server served from home.quakerhoughton.com by the WordPress
+      MCP Adapter plugin, discovered through the RFC 8414 and RFC 9728 documents the host publishes
+      under /.well-known/. It is OAuth 2.1 gated (authorization-code + PKCE, single scope `mcp`,
+      public clients via client-ID metadata documents); anonymous tools/list returns 401
+      mcp_unauthorized, so the tool inventory is unknown. It fronts the corporate website's
+      content estate, not any fluid-management product.
+    properties:
+      - url: mcp/quaker-houghton-mcp.yml
+        type: MCPServer
+      - url: mcp/quaker-houghton-tool-crosswalk.yml
+        type: ToolCrosswalk
+      - url: scopes/quaker-houghton-scopes.yml
+        type: OAuthScopes
 common:
   - type: DomainSecurity
     url: security/quaker-houghton-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/quakerhoughton
   - type: Website
-    url: https://www.quakerhoughton.com
+    url: https://home.quakerhoughton.com/
+  - type: PrivacyPolicy
+    url: https://home.quakerhoughton.com/privacy-policy/
+  - type: Support
+    url: https://home.quakerhoughton.com/contact/
+  - type: WellKnown
+    url: well-known/quaker-houghton-well-known.yml
+  - type: MCPServer
+    url: mcp/quaker-houghton-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/quaker-houghton-tool-crosswalk.yml
+  - type: OAuthScopes
+    url: scopes/quaker-houghton-scopes.yml
+  - type: Authentication
+    url: authentication/quaker-houghton-authentication.yml
+  - type: Conformance
+    url: conformance/quaker-houghton-conformance.yml
+  - type: ErrorCatalog
+    url: errors/quaker-houghton-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/quaker-houghton-lifecycle.yml
+  - type: Conventions
+    url: conventions/quaker-houghton-conventions.yml
+  - type: DataModel
+    url: data-model/quaker-houghton-data-model.yml
+  - type: LLMsTxt
+    url: llms/quaker-houghton-llms.txt
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Packages
+    url: packages/quaker-houghton-packages.yml
+  - type: Plans
+    url: plans/quaker-houghton-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/quaker-houghton-rate-limits.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-09-17'
+  status: enriched
+  artifacts_added: 20
+  pass: local-v3
+x-coverage:
+  state: covered
+  reason: null
+  detail: >-
+    Quaker Houghton sells industrial process fluids and publishes no product API, developer portal
+    or SDK (api./developer.quakerhoughton.com are wildcard DNS with a mismatched certificate, the
+    npm/PyPI/GitHub searches are empty), but its corporate WordPress host does serve real machine
+    surfaces: two Events Calendar OpenAPI documents (tribe/events/v1 stable and anonymously
+    readable, tec/v1 experimental and gated by an acknowledgement header) and an OAuth 2.1 gated
+    MCP server discovered through the RFC 8414 / RFC 9728 documents under /.well-known/ — all of
+    which were harvested verbatim; the calendar itself held zero events when probed.
+  evidence:
+    - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
+      status: 200
+    - url: https://home.quakerhoughton.com/wp-json/tec/v1/docs
+      status: 200
+    - url: https://home.quakerhoughton.com/.well-known/oauth-protected-resource/
+      status: 200
+    - url: https://home.quakerhoughton.com/wp-json/mcp/mcp-oauth-server
+      status: 401
+    - url: https://home.quakerhoughton.com/developers
+      status: 404
+    - url: https://api.quakerhoughton.com/openapi.json
+      status: 0
+  checked: '2026-09-17'
