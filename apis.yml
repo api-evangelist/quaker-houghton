@@ -32,7 +32,7 @@ tags:
   - Manufacturing
   - Metalworking
   - Lubricants
-  - Events
+  - Event
   - MCP
 tags_raw:
   - Industrial Fluids
@@ -56,6 +56,11 @@ apis:
   - aid: quaker-houghton:quaker-houghton-events-api
     name: Quaker Houghton Events API
     tags:
+      - Event
+      - Venues
+      - Organizers
+      - Content Management
+    tags_raw:
       - Events
       - Venues
       - Organizers
@@ -85,6 +90,11 @@ apis:
   - aid: quaker-houghton:quaker-houghton-tec-v1-events-api
     name: Quaker Houghton TEC v1 Events API
     tags:
+      - Event
+      - Venues
+      - Organizers
+      - Content Management
+    tags_raw:
       - Events
       - Venues
       - Organizers
