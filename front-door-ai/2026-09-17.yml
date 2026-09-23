@@ -1,0 +1,26 @@
+# Front Door AI Index — quaker-houghton — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: quaker-houghton
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: home.quakerhoughton.com
+  final_host: home.quakerhoughton.com
+  ownership: own
+  owner: quaker-houghton
+  shares_host_with: null
+  inherited_from: null
+  verdict: silent
+  score: 0
+  host_score: 0
+  density: 0.0
+  words: 1377
+  tiers:
+    agentic: 0
+    core: 0
+    model: 0
+  ambiguous: 7
+  top_terms:
+    intelligence: 4
+    agent: 3
