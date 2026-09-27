@@ -53,73 +53,20 @@ created: '2026-04-19'
 modified: '2026-09-17'
 specificationVersion: '0.23'
 apis:
-  - aid: quaker-houghton:quaker-houghton-events-api
-    name: Quaker Houghton Events API
+  - aid: quaker-houghton:home-quakerhoughton-com-website-wordpress-rest
+    name: Quaker Houghton Website (WordPress REST)
+    description: 'The public WordPress REST API (wp-json) of the Quaker Houghton website at home.quakerhoughton.com:
+      the route index of the site''s content management system, catalogued as one site surface rather than
+      as separate APIs.'
+    baseURL: https://home.quakerhoughton.com/wp-json
     tags:
-      - Event
-      - Venues
-      - Organizers
-      - Content Management
-    tags_raw:
-      - Events
-      - Venues
-      - Organizers
-      - Content Management
-    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    baseURL: https://home.quakerhoughton.com/wp-json/tribe/events/v1
-    humanURL: https://home.quakerhoughton.com/events/
-    description: >-
-      The stable Events Calendar v1 REST API on home.quakerhoughton.com, the corporate site,
-      serving its event calendar as JSON — events with dates, venue, organizer, categories and
-      tags. Read access is anonymous and keyless (30 operations declared across events, venues,
-      organizers, categories and tags; the write half requires WordPress authentication). The
-      contract is published live by the host at /wp-json/tribe/events/v1/doc. This is a
-      self-hosted CMS plugin surface (The Events Calendar), not a product API — and the calendar
-      it serves was empty (total 0) when probed on 2026-09-17.
+    - WordPress
+    x-surface: platform-generated
     properties:
-      - url: openapi/_original/quaker-houghton-tribe-events-v1-openapi-original.json
-        type: OpenAPI
-      - url: https://home.quakerhoughton.com/wp-json/tribe/events/v1/doc
-        type: APIReference
-      - url: errors/quaker-houghton-problem-types.yml
-        type: ErrorCatalog
-      - url: data-model/quaker-houghton-data-model.yml
-        type: DataModel
-      - url: overlays/quaker-houghton-tribe-events-v1-overlay.yaml
-        type: Overlay
-  - aid: quaker-houghton:quaker-houghton-tec-v1-events-api
-    name: Quaker Houghton TEC v1 Events API
-    tags:
-      - Event
-      - Venues
-      - Organizers
-      - Content Management
-    tags_raw:
-      - Events
-      - Venues
-      - Organizers
-      - Content Management
-    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-    baseURL: https://home.quakerhoughton.com/wp-json/tec/v1
-    humanURL: https://home.quakerhoughton.com/events/
-    description: >-
-      The newer, experimental Events Calendar `tec/v1` REST namespace on home.quakerhoughton.com:
-      16 operations across events, venues and organizers, with an OpenAPI 3.0.4 document served
-      live at /wp-json/tec/v1/docs and HTTP Basic declared on every write. Every data endpoint
-      currently answers 400 `missing_experimental_endpoint_acknowledgement` until the caller
-      sends the plugin's experimental-acknowledgement header, so the stable tribe/events/v1
-      namespace is the one to call. Self-hosted CMS plugin surface, not a product API.
-    properties:
-      - url: openapi/_original/quaker-houghton-tec-v1-openapi-original.json
-        type: OpenAPI
-      - url: https://home.quakerhoughton.com/wp-json/tec/v1/docs
-        type: APIReference
-      - url: errors/quaker-houghton-problem-types.yml
-        type: ErrorCatalog
-      - url: data-model/quaker-houghton-data-model.yml
-        type: DataModel
-      - url: overlays/quaker-houghton-tec-v1-overlay.yaml
-        type: Overlay
+    - type: Documentation
+      url: https://home.quakerhoughton.com/wp-json
+    x-platform: wordpress
+    x-platform-surface: rest
   - aid: quaker-houghton:quaker-houghton-mcp-server
     name: Quaker Houghton MCP Server
     tags:
@@ -142,6 +89,9 @@ apis:
         type: ToolCrosswalk
       - url: scopes/quaker-houghton-scopes.yml
         type: OAuthScopes
+    x-surface: platform-generated
+    x-platform: wordpress
+    x-platform-surface: mcp-plugin
 common:
   - type: DomainSecurity
     url: security/quaker-houghton-domain-security.yml
