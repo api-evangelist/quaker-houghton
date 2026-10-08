@@ -93,6 +93,8 @@ apis:
     x-platform: wordpress
     x-platform-surface: mcp-plugin
 common:
+  - type: FinOps
+    url: finops/quaker-houghton-finops.yml
   - type: DomainSecurity
     url: security/quaker-houghton-domain-security.yml
   - type: LinkedIn
